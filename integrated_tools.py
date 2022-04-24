@@ -11,7 +11,6 @@ def interleave(*iterable):
 
                 >>> print(interleave('abc', [1, 2, 3],('!','@','#')))
                 ['a', '1', '!', 'b', '2', '@', 'c', '3', '#']
-
             """
     return [item[index] for index in range(0, len(iterable))
             for item in iterable if len(item) > index]
