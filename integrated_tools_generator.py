@@ -1,25 +1,33 @@
 import itertools
+import numpy as np
+
 
 def interleave(*iterable):
-    """ get one iterable object or more and merge the objects contents """
-    permuts=[]
-    merged=[]
-    for item in iterable:
-     permut = itertools.permutations(item, len(item))
-     permuts.append(list(permut))
-    index1=0
-    index2=0
-    while index2<len(permuts[index1]):
-        while index1 <len(permuts) :
-            merged.append(permuts[index1][index2])
-            index1+=1
-        q=[val for tup in zip(*merged) for val in tup]
-        yield q
-        merged.clear()
-        index1=0
-        index2+=1
+    """yields each time different interleave of the objects
+       by mergeing all the permutations of each object.
+            Args:
+                *iterable (iterable): one iterable object or more .
+            Yields:
+                list: one interleave of the objects.
+            Raises:
+                none.
+            Examples:
+                one posible interleave of 'abc' and [1,2,3] is ['a',1,'b',2,'c',3] .
 
-gen=interleave('abc', [1, 2, 3],('!','@','#'),('Q','W','E'))
-print(next(gen))
+                >>> generator = interleave('abc', [1, 2, 3],('!','@','#'))
+                >>> print(next(generator))
+                ['a', '1', '!', 'b', '2', '@', 'c', '3', '#']
+
+            """
+
+    objects_permutations = [list(itertools.permutations(item, len(item))) for item in iterable]
+    permutations_number = len(objects_permutations[0])
+    objects_merged_permutations = \
+        np.array_split([val for tup in zip(*objects_permutations) for val in tup], permutations_number)
+    # in order to get in each index of the list a one permutation of each object
+    for i in range(0, len(objects_merged_permutations)):
+        yield [val for tup in zip(*objects_merged_permutations[i]) for val in tup]
 
 
+generator = interleave('abc', [1, 2, 3], ('!', '@', '#'))
+print(next(generator))
